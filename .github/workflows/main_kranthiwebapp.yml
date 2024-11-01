@@ -46,12 +46,13 @@ jobs:
         with:
           name: MyWebApp
       
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
+- name: Login to Azure
+  uses: azure/login@v2
+  with:
+    client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}   # Ensure this secret exists
+    client-secret: ${{ secrets.AZUREAPPSERVICE_CLIENTSECRET }}  # Add this secret
+    tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}   # Ensure this secret exists
+    subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}  # Ensure this secret exists
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
