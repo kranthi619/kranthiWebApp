@@ -30,13 +30,13 @@ jobs:
         run: mvn clean package -f kranthiWebApp/MyWebApp/pom.xml  # Build and package the WAR file
 
       - name: Check for target files
-        run: ls -al kranthiWebApp/MyWebApp/target  # List target directory contents to see if WAR file is present
+        run: ls -al MyWebApp/target  # List target directory contents to see if WAR file is present
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: MyWebApp
-          path: 'kranthiWebApp/MyWebApp/target/*.war'  # Ensure the path to the WAR file is correct
+          path: 'MyWebApp/target/*.war'  # Ensure the path to the WAR file is correct
 
   deploy:
     runs-on: ubuntu-latest
