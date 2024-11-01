@@ -28,8 +28,8 @@ jobs:
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: MyWebApp
-          path: MyWebApp/target/*.jar
+          name: MyWebAppArtifact  # Changed artifact name to be more specific
+          path: MyWebApp/target/*.jar  # Ensure this path matches your repo structure
 
   deploy:
     runs-on: ubuntu-latest
@@ -44,7 +44,7 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: MyWebApp
+          name: MyWebAppArtifact  # Ensure this matches the name used in the upload step
       
       - name: Login to Azure
         uses: azure/login@v2
