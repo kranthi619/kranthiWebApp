@@ -1,4 +1,4 @@
-name: Build and deploy JAR app to Azure Web App - KranthiWebApp
+name: Build and deploy WAR app to Azure Web App - KranthiWebApp
 
 on:
   push:
@@ -20,16 +20,22 @@ jobs:
           distribution: 'adopt'
 
       - name: Build with Maven
-        run: mvn clean install -f MyWebApp/pom.xml
+        run: mvn clean install -f kranthiWebApp/MyWebApp/pom.xml
 
-      - name: List target files
-        run: ls -al MyWebApp/target
+      - name: Check if WAR exists
+        run: |
+          if ls kranthiWebApp/MyWebApp/target/*.war; then
+            echo "WAR file found.";
+          else
+            echo "WAR file not found in kranthiWebApp/MyWebApp/target.";
+            exit 1;
+          fi
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: MyWebAppArtifact  # Changed artifact name to be more specific
-          path: MyWebApp/target/*.jar  # Ensure this path matches your repo structure
+          name: MyWebAppArtifact
+          path: kranthiWebApp/MyWebApp/target/*.war
 
   deploy:
     runs-on: ubuntu-latest
@@ -44,14 +50,14 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: MyWebAppArtifact  # Ensure this matches the name used in the upload step
+          name: MyWebAppArtifact
       
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_D1D8F6EDFED84B36A5D29CB6EC3C1585 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_99F3527905A14168B06183A6D2C18952 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_0E0EDD6BFA43481B926FC86BF18853E6 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -59,4 +65,4 @@ jobs:
         with:
           app-name: 'KranthiWebApp'
           slot-name: 'Production'
-          package: '*.jar'
+          package: '*.war'
