@@ -1,4 +1,4 @@
-name: Build and deploy WAR app to Azure Web App - KranthiWebApp
+name: Build and deploy JAR app to Azure Web App - KranthiWebApp
 
 on:
   push:
@@ -20,22 +20,13 @@ jobs:
           distribution: 'adopt'
 
       - name: Build with Maven
-        run: mvn clean install -f kranthiWebApp/MyWebApp/pom.xml
-
-      - name: Check if WAR exists
-        run: |
-          if ls kranthiWebApp/MyWebApp/target/*.war; then
-            echo "WAR file found.";
-          else
-            echo "WAR file not found in kranthiWebApp/MyWebApp/target.";
-            exit 1;
-          fi
+        run: mvn clean install -f MyWebApp/pom.xml
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: MyWebAppArtifact
-          path: kranthiWebApp/MyWebApp/target/*.war
+          name: MyWebApp
+          path: 'MyWebApp/target/*.jar'
 
   deploy:
     runs-on: ubuntu-latest
@@ -50,7 +41,7 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: MyWebAppArtifact
+          name: MyWebApp
       
       - name: Login to Azure
         uses: azure/login@v2
@@ -65,4 +56,4 @@ jobs:
         with:
           app-name: 'KranthiWebApp'
           slot-name: 'Production'
-          package: '*.war'
+          package: '*.jar'
