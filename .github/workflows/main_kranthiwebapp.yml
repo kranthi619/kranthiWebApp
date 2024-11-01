@@ -20,16 +20,16 @@ jobs:
           distribution: 'adopt'
 
       - name: Build with Maven
-        run: mvn clean package -f MyWebApp/pom.xml  # Adjusted to ensure correct path
+        run: mvn clean package -f MyWebApp/pom.xml
 
       - name: Check for target files
-        run: ls -al MyWebApp/target  # Ensure this reflects the correct path
+        run: ls -al MyWebApp/target
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: MyWebApp
-          path: 'MyWebApp/target/*.war'  # Use .war as output is set to WAR in pom.xml
+          path: 'MyWebApp/target/*.war'
 
   deploy:
     runs-on: ubuntu-latest
@@ -49,11 +49,13 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: KranthiWebApp  # Your Azure Web App name
-          package: '*.war'          # Ensure this matches the output location of your WAR file
+          app-name: KranthiWebApp
+          package: '*.war'
