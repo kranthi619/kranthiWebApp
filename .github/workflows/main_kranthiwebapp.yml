@@ -1,4 +1,4 @@
-name: Build and deploy JAR app to Azure Web App - KranthiWebApp
+name: Build and deploy WAR app to Azure Web App - KranthiWebApp
 
 on:
   push:
@@ -20,13 +20,16 @@ jobs:
           distribution: 'adopt'
 
       - name: Build with Maven
-        run: mvn clean install -f MyWebApp/pom.xml
+        run: mvn clean install -f kranthiWebApp/MyWebApp/pom.xml
+
+      - name: Check for target files
+        run: ls -al kranthiWebApp/MyWebApp/target
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: MyWebApp
-          path: 'MyWebApp/target/*.jar'
+          path: 'kranthiWebApp/MyWebApp/target/*.war'  # Use .war as output is set to WAR in pom.xml
 
   deploy:
     runs-on: ubuntu-latest
@@ -56,4 +59,4 @@ jobs:
         with:
           app-name: 'KranthiWebApp'
           slot-name: 'Production'
-          package: '*.jar'
+          package: 'kranthiWebApp/MyWebApp/target/*.war'
