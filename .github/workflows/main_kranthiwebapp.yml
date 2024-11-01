@@ -1,4 +1,4 @@
-name: Build and Deploy WAR App to Azure Web App - KranthiWebApp
+name: Build and deploy WAR app to Azure Web App - KranthiWebApp
 
 on:
   push:
@@ -22,6 +22,9 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -f MyWebApp/pom.xml  # Adjusted to ensure correct path
 
+      - name: Check for target files
+        run: ls -al MyWebApp/target  # Ensure this reflects the correct path
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
@@ -31,12 +34,24 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    permissions:
+      id-token: write
+  
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: MyWebApp
       
+      - name: Debug Secrets
+        run: |
+          echo "Client ID: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}"
+          echo "Tenant ID: ${{ secrets.AZUREAPPSERVICE_TENANTID }}"
+          echo "Subscription ID: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}"
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -47,4 +62,4 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: KranthiWebApp  # Your Azure Web App name
-          package: '*.war'
+          package: '*.war'  # Ensure this matches the artifact being deployed
