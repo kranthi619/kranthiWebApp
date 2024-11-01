@@ -1,4 +1,4 @@
-name: Build and Deploy WAR App to Azure Web App - KranthiWebApp
+name: Build and deploy WAR app to Azure Web App - KranthiWebApp
 
 on:
   push:
@@ -11,14 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: List current directory contents for debugging
-        run: ls -al  # List all files and directories in the current directory
-
-      - name: List contents of the 'kranthiWebApp' directory
-        run: ls -al kranthiWebApp  # This will fail if 'kranthiWebApp' does not exist
+      - uses: actions/checkout@v4
 
       - name: Set up Java version
         uses: actions/setup-java@v4
@@ -27,16 +20,16 @@ jobs:
           distribution: 'adopt'
 
       - name: Build with Maven
-        run: mvn clean package -f kranthiWebApp/MyWebApp/pom.xml  # Build and package the WAR file
+        run: mvn clean package -f MyWebApp/pom.xml  # Updated path
 
       - name: Check for target files
-        run: ls -al MyWebApp/target  # List target directory contents to see if WAR file is present
+        run: ls -al MyWebApp/target  # Updated path
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: MyWebApp
-          path: 'MyWebApp/target/*.war'  # Ensure the path to the WAR file is correct
+          path: 'MyWebApp/target/*.war'  # Updated path
 
   deploy:
     runs-on: ubuntu-latest
@@ -63,3 +56,7 @@ jobs:
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
+        with:
+          # Add your Azure Web App name and other necessary parameters here
+          app-name: your-app-name
+          package: '*.war'
