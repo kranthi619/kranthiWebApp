@@ -14,14 +14,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: List current directory contents for debugging
+        run: ls -al  # List all files and directories in the current directory
+
+      - name: List contents of the 'kranthiWebApp' directory
+        run: ls -al kranthiWebApp  # This will fail if 'kranthiWebApp' does not exist
+
       - name: Set up Java version
         uses: actions/setup-java@v4
         with:
           java-version: '11'
           distribution: 'adopt'
-
-      - name: List directory contents for debugging
-        run: ls -R kranthiWebApp  # List all files and directories under kranthiWebApp
 
       - name: Build with Maven
         run: mvn clean package -f kranthiWebApp/MyWebApp/pom.xml  # Build and package the WAR file
