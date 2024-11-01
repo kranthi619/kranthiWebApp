@@ -49,10 +49,7 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}   # Ensure this secret exists
-          client-secret: ${{ secrets.AZUREAPPSERVICE_CLIENTSECRET }}  # Ensure this secret exists
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}   # Ensure this secret exists
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}  # Ensure this secret exists
+          creds: '{"clientId":"${{ secrets.AZUREAPPSERVICE_CLIENTID }}","clientSecret":"${{ secrets.AZUREAPPSERVICE_CLIENTSECRET }}","tenantId":"${{ secrets.AZUREAPPSERVICE_TENANTID }}","subscriptionId":"${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}"}'
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
